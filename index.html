@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sömnadsquiz: Termin 1</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪡</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Young+Serif&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F5F6F2; --dot:#C7D1D9; --ink:#1E2638; --muted:#5A6374;
+  --card:#FFFFFF; --line:#D6DADF; --tape:#F2C531; --tape-ink:#2B2919;
+  --thread:#B3283A; --thread-soft:#F8E3E5; --right:#2E7A4D; --right-soft:#E1F1E7;
+  --focus:#2B5FD9;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#151A24; --dot:#2A3343; --ink:#E8EBF1; --muted:#A1A9B8;
+    --card:#1D2431; --line:#323B4C; --tape:#E3B72B; --tape-ink:#211F12;
+    --thread:#EA6B76; --thread-soft:#3A2128; --right:#62C690; --right-soft:#1C3328;
+    --focus:#7FA5FF; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#151A24; --dot:#2A3343; --ink:#E8EBF1; --muted:#A1A9B8;
+  --card:#1D2431; --line:#323B4C; --tape:#E3B72B; --tape-ink:#211F12;
+  --thread:#EA6B76; --thread-soft:#3A2128; --right:#62C690; --right-soft:#1C3328;
+  --focus:#7FA5FF; color-scheme:dark;
+}
+*{box-sizing:border-box}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0; color:var(--ink); background-color:var(--paper);
+  background-image:radial-gradient(var(--dot) 1px, transparent 1.2px);
+  background-size:18px 18px;
+  font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:1.0625rem; line-height:1.55;
+}
+main{max-width:44rem;margin:0 auto;padding:2rem 1.25rem 4rem}
+h1,h2{font-family:"Young Serif",Georgia,"Times New Roman",serif;font-weight:400;line-height:1.15;margin:0}
+h1{font-size:clamp(2rem,6vw,2.9rem);letter-spacing:-.01em}
+h2{font-size:1.5rem}
+p{margin:.5rem 0}
+.lede{color:var(--muted);max-width:34rem}
+.sheet{
+  background:var(--card);border:1px solid var(--line);border-radius:6px;
+  padding:1.5rem;margin-top:1.5rem;
+}
+/* Måttband */
+.tape-wrap{margin:1.75rem 0 .5rem}
+.tape{
+  position:relative;height:34px;border-radius:3px;overflow:hidden;
+  background:var(--card);border:1px solid var(--line);
+}
+.tape-fill{
+  position:absolute;inset:0 auto 0 0;width:0;background-color:var(--tape);
+  background-image:
+    repeating-linear-gradient(90deg,var(--tape-ink) 0 1px,transparent 1px 10px),
+    repeating-linear-gradient(90deg,var(--tape-ink) 0 1.5px,transparent 1.5px 50px);
+  background-size:100% 9px,100% 16px;background-repeat:no-repeat;
+  background-position:0 0,0 0;
+  transition:width .45s cubic-bezier(.2,.8,.2,1);
+}
+.tape-label{display:flex;justify-content:space-between;color:var(--muted);font-size:.9rem;margin-top:.35rem}
+@media (prefers-reduced-motion:reduce){.tape-fill{transition:none}}
+/* Start */
+fieldset{border:0;padding:0;margin:1.25rem 0 0}
+legend{font-weight:700;margin-bottom:.5rem}
+.chips{display:flex;flex-wrap:wrap;gap:.5rem}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;pointer-events:none}
+.chip span{
+  display:inline-block;padding:.4rem .8rem;border:1px solid var(--line);border-radius:999px;
+  cursor:pointer;user-select:none;background:var(--paper);font-size:.95rem
+}
+.chip input:checked + span{background:var(--ink);color:var(--card);border-color:var(--ink)}
+.chip input:focus-visible + span{outline:3px solid var(--focus);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin-top:1.5rem}
+button{
+  font:inherit;cursor:pointer;border-radius:4px;padding:.65rem 1.1rem;
+  border:1px solid var(--ink);background:var(--ink);color:var(--card);font-weight:700
+}
+button.quiet{background:transparent;color:var(--ink)}
+button:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+button:disabled{opacity:.4;cursor:not-allowed}
+.small{font-size:.9rem;color:var(--muted)}
+/* Fråga */
+.cat{color:var(--muted);font-size:.95rem;margin-bottom:.4rem}
+.question{font-family:"Young Serif",Georgia,serif;font-size:1.35rem;line-height:1.3;margin:0 0 1.25rem}
+.opts{display:grid;gap:.6rem}
+.opt{
+  display:flex;gap:.8rem;align-items:flex-start;text-align:left;width:100%;
+  background:var(--card);color:var(--ink);border:1px solid var(--line);font-weight:400;
+  padding:.8rem 1rem;border-radius:4px
+}
+.opt:hover:not(:disabled){border-color:var(--ink)}
+.opt:disabled{opacity:1;cursor:default}
+.key{
+  flex:none;width:1.6rem;height:1.6rem;border-radius:50%;border:1px solid var(--line);
+  display:grid;place-items:center;font-size:.85rem;color:var(--muted)
+}
+.opt.right{border-color:var(--right);background:var(--right-soft)}
+.opt.right .key{border-color:var(--right);color:var(--right);font-weight:700}
+.opt.wrong{border-color:var(--thread);background:var(--thread-soft)}
+.opt.wrong .key{border-color:var(--thread);color:var(--thread);font-weight:700}
+.explain{
+  margin-top:1.1rem;padding:.9rem 1rem;border-left:3px dashed var(--thread);
+  background:var(--paper);border-radius:0 4px 4px 0
+}
+.explain.ok{border-left-color:var(--right)}
+.explain strong{display:block;margin-bottom:.15rem}
+/* Resultat */
+.score{font-family:"Young Serif",Georgia,serif;font-size:clamp(3rem,12vw,4.5rem);line-height:1;margin:.5rem 0}
+.missed{list-style:none;padding:0;margin:1rem 0 0}
+.missed li{padding:.8rem 0;border-top:1px dashed var(--line)}
+.missed .q{font-weight:700}
+.missed .a{color:var(--right)}
+.hidden{display:none}
+footer{margin-top:2.5rem;color:var(--muted);font-size:.85rem}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Sömnad och mönsterkonstruktion</h1>
+    <p class="lede">Övningsprov inför termin 1. Svara, läs förklaringen och gå vidare. Frågorna och svarsalternativen blandas varje gång.</p>
+  </header>
+
+  <div class="tape-wrap" aria-hidden="true">
+    <div class="tape"><div class="tape-fill" id="tapeFill"></div></div>
+    <div class="tape-label"><span id="tapeLeft">0 besvarade</span><span id="tapeRight"></span></div>
+  </div>
+
+  <!-- Start -->
+  <section class="sheet" id="startView">
+    <h2>Välj vad du vill öva på</h2>
+    <fieldset>
+      <legend>Områden</legend>
+      <div class="chips" id="cats"></div>
+    </fieldset>
+    <fieldset>
+      <legend>Antal frågor</legend>
+      <div class="chips" id="counts"></div>
+    </fieldset>
+    <div class="row">
+      <button id="startBtn">Starta provet</button>
+      <span class="small" id="avail"></span>
+    </div>
+  </section>
+
+  <!-- Fråga -->
+  <section class="sheet hidden" id="quizView" aria-live="polite">
+    <div class="cat" id="qCat"></div>
+    <p class="question" id="qText"></p>
+    <div class="opts" id="opts"></div>
+    <div id="explain"></div>
+    <div class="row">
+      <button id="nextBtn" class="hidden">Nästa fråga</button>
+      <button id="quitBtn" class="quiet">Avsluta</button>
+      <span class="small">Tangent 1 till 4 väljer, Enter går vidare.</span>
+    </div>
+  </section>
+
+  <!-- Resultat -->
+  <section class="sheet hidden" id="resultView">
+    <h2>Resultat</h2>
+    <p class="score" id="score"></p>
+    <p id="verdict"></p>
+    <div class="row">
+      <button id="retryMissed">Öva på de missade</button>
+      <button id="restart" class="quiet">Nytt prov</button>
+    </div>
+    <ul class="missed" id="missed"></ul>
+  </section>
+
+  <footer>Frågorna bygger på kompendiet från Stockholms Tillskärarakademi, termin 1.</footer>
+</main>
+
+<script>
+const Q = [
+/* Symaskiner */
+{k:"Symaskiner",q:"Vad kännetecknar en raksömsmaskin?",a:["Fast nålstång, syr endast raksöm","Rörlig nålstång, kan sy olika typer av sömmar","Kastar över sömmen och skär sömsmånen","Syr endast med en tråd"],e:"Raksömsmaskinen har fast nålstång och syr bara raksöm. Hushållsmaskinen har rörlig nålstång."},
+{k:"Symaskiner",q:"Vad gör en overlockmaskin?",a:["Kastar över sömmen och skär sömsmånen","Syr endast raksöm med fast nålstång","Syr knapphål automatiskt","Pressar sömmen platt"],e:"Overlock: överkastning av söm, skär sömsmånen samtidigt."},
+{k:"Symaskiner",q:"Hur många trådar kan en overlockmaskin ha enligt kompendiet?",a:["2, 3, 4 eller 5 trådar","Alltid 3 trådar","1 eller 2 trådar","6 till 8 trådar"],e:"Det finns 2-, 3-, 4- och 5-trådiga overlockmaskiner."},
+{k:"Symaskiner",q:"Vilken symaskin har rörlig nålstång och kan sy olika typer av sömmar?",a:["Hushållsmaskinen","Raksömsmaskinen","Overlockmaskinen","Täcksömsmaskinen"],e:"Hushållsmaskinen har rörlig nålstång och därför flera sömtyper."},
+{k:"Symaskiner",q:"Vilken stygnlängd räknas som vanlig?",a:["2-2,5 mm per stygn","0,5-1 mm per stygn","4-5 mm per stygn","6 mm per stygn"],e:"Vanlig stygnlängd är 2-2,5 mm. Den anpassas efter material och sömtyp."},
+{k:"Symaskiner",q:"När är trådspänningen rätt?",a:["När övertråd och undertråd möts i mitten av tyget","När övertråden syns på avigsidan","När undertråden syns på rätsidan","När båda trådarna ligger på rätsidan"],e:"Rätt trådspänning: trådarna möts mitt i tyget."},
+{k:"Symaskiner",q:"Vilken av dessa är INTE en orsak till att övertråden går av?",a:["Fjädern på spolkapseln är för hårt spänd","Skada i stygnplåten","Maskinen är felträdd","Tråden är för grov"],e:"Fjädern på spolkapseln påverkar undertråden, inte övertråden."},
+{k:"Symaskiner",q:"Undertråden går av. Vad kan orsaken vara?",a:["Fjädern på spolkapseln är för hårt spänd","Nålen är för tunn","Pressarfoten är uppfälld","Tyget är förbehandlat"],e:"Undertråden går av vid dålig tråd, fel trådspänning (för hårt spänd fjäder på spolkapseln) eller skadad stygnplåt."},
+{k:"Symaskiner",q:"Maskinen gör hoppstygn. Vad är den troliga orsaken?",a:["Böjd, uddstött eller felaktigt isatt nål","För låg stygnlängd","För tunn undertråd","Tyget är för tjockt"],e:"Hoppstygn beror på nålen: böjd, uddstött eller felaktigt isatt."},
+{k:"Symaskiner",q:"Tyget rynkar sig när du syr. Vad är orsaken enligt kompendiet?",a:["Fel trådspänning","Maskinen behöver oljas","Nålen sitter för högt","För kort stygnlängd"],e:"Både rynkor och öglor i tråden beror på fel trådspänning."},
+{k:"Symaskiner",q:"Vad ska du ALDRIG göra när du syr på maskin?",a:["Dra i tyget","Hålla i trådändarna när du börjar","Sänka pressarfoten","Backa i början av sömmen"],e:"Drar du i tyget kan nålen böjas, slå i stygnplåten och gå av."},
+{k:"Symaskiner",q:"Fula stygn kan bero på fel trådspänning, uddstött nål och...",a:["att maskinen måste rengöras","att tyget är för brett","att spolen är för full","att pressarfoten är för låg"],e:"Fula stygn: maskinen måste rengöras, fel trådspänning eller uddstött nål."},
+{k:"Symaskiner",q:"Vad är ett annat namn på spolkapseln?",a:["Hylsa","Spolhus","Trådbygel","Trådgivararm"],e:"Spolkapsel/hylsa. Spolkapselhållaren kallas spolhus."},
+{k:"Symaskiner",q:"Vad kallas spolkapselhållaren också?",a:["Spolhus","Hylsa","Stygnplåt","Trådledareögla"],e:"Spolkapselhållare = spolhus."},
+{k:"Symaskiner",q:"Hur får man färre trådbrott vid trådföringsplattor med flera hål?",a:["Genom att träda tråden runt kanterna i stället för bara genom hålen","Genom att bara använda mittenhålet","Genom att hoppa över plattan helt","Genom att använda dubbel tråd"],e:"Tips från ritningen: träd runt kanterna, inte enbart genom hålen."},
+
+/* Nålar */
+{k:"Nålar",q:"Vad var de allra första nålarna?",a:["En vass flintsten eller en syl av ben, utan nålsöga","Bronsnålar med runt öga","Järnnålar med långt öga","Benåla med förgyllt öga"],e:"De första nålarna hade inget öga. Man stack hål i skinnet och förde tråden igenom."},
+{k:"Nålar",q:"I vilken stad bildades ett nålmakargille 1343?",a:["Nürnberg","Stockholm","Paris","London"],e:"Tråddragningen uppfanns i Tyskland och Nürnberg blev centrum för tillverkningen."},
+{k:"Nålar",q:"När kom den första nålen i stål?",a:["För ca 600 år sedan","För ca 100 år sedan","Ca 100 f.Kr.","För ca 2000 år sedan"],e:"Den första stålnålen kom för ca 600 år sedan."},
+{k:"Nålar",q:"Vad betyder ett högre nummer på en synål?",a:["Tunnare och kortare nål","Tjockare och längre nål","Större nålsöga","Vassare spets"],e:"Nr 9 är betydligt tunnare och kortare än nr 3."},
+{k:"Nålar",q:"Vilken stramaljnål är tunnast?",a:["Nr 24","Nr 18","Nr 20","Nr 22"],e:"Samma princip som för synålar: högre nummer, tunnare nål."},
+{k:"Nålar",q:"Vilken nål har rund spets?",a:["Jerseynålen","Skinnålen","Stramaljnålen med udd","Stoppnålen"],e:"Rund spets används för jersey så att maskorna inte skadas."},
+{k:"Nålar",q:"Vilka nålar har långt öga?",a:["Stoppnålar","Synålar","Blindnålar","Jerseynålar"],e:"Runt öga: synålar. Långt öga: stoppnålar."},
+{k:"Nålar",q:"Vad är en handsknål?",a:["Samma sak som en skinnål","En stramaljnål utan udd","En nål med förgyllt öga","En nål för jersey"],e:"Skinnål och handsknål är samma nål, med skärande spets."},
+{k:"Nålar",q:"Vad görs sist i dagens nåltillverkning?",a:["Nålarna förnicklas","Nålsögat stansas ut","Ståltråden sträcks","Spetsen hamras ut"],e:"Ordningen: dra tråd, härda, kapa, slipa, stansa öga, härda, rensa och polera, förnickla."},
+{k:"Nålar",q:"Ståltråden kapas i en längd som motsvarar...",a:["2 nålar","1 nål","5 nålar","10 nålar"],e:"Den kapas för 2 nålar, slipas i bägge ändar och bryts isär efter att ögat stansats."},
+
+/* Utlägg & tillklippning */
+{k:"Utlägg & tillklippning",q:"Hur bör du förbehandla tyget innan du klipper?",a:["Så som plagget ska behandlas sedan","Alltid kemtvätt","Alltid 60 graders tvätt","Ingen förbehandling behövs"],e:"Tumregel: förbehandla tyget så som plagget ska skötas."},
+{k:"Utlägg & tillklippning",q:"Hur ska du dampa tyget?",a:["Från avigsidan och på enkelt tyg","Från rätsidan på dubbelt tyg","Med presstrasa på vikt tyg","Utan ånga från rätsidan"],e:"Dampa alltid från avigsidan och på enkelt tyg. Pressa aldrig några veck!"},
+{k:"Utlägg & tillklippning",q:"Hur lägger du ut tyget inför tillklippning?",a:["Dubbelt med vikning längs varpen, räta mot räta, stadkanterna exakt kant i kant","Dubbelt med vikning längs väften, aviga mot aviga","Enkelt med rätsidan uppåt","Diagonalt för att spara tyg"],e:"Vikning längs varpen, räta mot räta, stadkant mot stadkant."},
+{k:"Utlägg & tillklippning",q:"Vilka mönsterdelar placerar du ut först?",a:["De som ska ligga mot vikt kant","De minsta delarna","Infodringarna","Ärmarna"],e:"Börja med delarna mot vikt kant och placera ALLA delar innan du klipper."},
+{k:"Utlägg & tillklippning",q:"Vad märker du upp mönsterdelarna med?",a:["Namn, trådrak, stämhack och antal","Bara namn","Datum och storlek","Färg och tygtyp"],e:"Namn, trådrak, stämhack och antal."},
+{k:"Utlägg & tillklippning",q:"Hur djupa ska jacken vid stämhacken vara?",a:["3 mm","1 cm","1 mm","5 mm"],e:"Små jack, 3 mm, i sömsmånen vid alla stämhack."},
+{k:"Utlägg & tillklippning",q:"När pressar du på mellanlägg?",a:["Innan du trådmarkerar","Efter att plagget är sytt","Innan du klipper ut tyget","Under avpressen"],e:"Separera delarna och pressa på mellanlägg innan du trådmarkerar."},
+{k:"Utlägg & tillklippning",q:"Hur många trådar använder du per sträcka när du trådmarkerar?",a:["En tråd per sträcka","En tråd för hela delen","Två trådar per sträcka","En ny tråd per stygn"],e:"Använd alltid en tråd per sträcka."},
+{k:"Utlägg & tillklippning",q:"Vad gäller för kritan när du markerar?",a:["Den ska vara välvässad så markeringen blir smal och exakt","Den ska vara trubbig så linjen syns tydligt","Man ska använda vax i stället","Den ska fuktas"],e:"Välvässad krita, fiffikus eller måttband för exakthet."},
+{k:"Utlägg & tillklippning",q:"Vad avgör sömsmånens bredd?",a:["Vilken söm du ska använda och sömnadsmetoden","Tygets färg","Hur stor mönsterdelen är","Alltid 1 cm"],e:"Bredden beror på söm och sömnadsmetod."},
+{k:"Utlägg & tillklippning",q:"Vilka fyra ord avslutar lathunden?",a:["Läs! Tänk! Fråga! Gör!","Mät! Krita! Klipp! Sy!","Planera! Pressa! Prova! Sy!","Titta! Lyssna! Lär! Gör!"],e:"Läs! Tänk! Fråga! Gör!"},
+
+/* Markeringar */
+{k:"Markeringar",q:"På vilket tyg används sporrpapper?",a:["Endast på toiletyg","På ull","På siden och organza","På alla tyger"],e:"Sporrpapper gör lätt hål, förstör materialet och är svårt att få bort."},
+{k:"Markeringar",q:"Vad gäller för märkstick?",a:["Dubbel tråd, dubbelt tyg och endast på ull","Enkel tråd i enkelt tyg","Görs med sytråd i siden","Görs på alla material"],e:"Märkstick: dubbel tråckeltråd, dubbelt tyg, bara ull."},
+{k:"Markeringar",q:"Hur långa ska nopporna vara efter märkstick?",a:["Max 1-2 mm","Ca 5 mm","Ca 1 cm","Så långa som möjligt"],e:"Klipp nopporna till max 1-2 mm och ånga så att tråden sväller."},
+{k:"Markeringar",q:"Varför ångar man märksticken?",a:["Så att tråden sväller och sitter bättre","Så att tråden krymper bort","För att färgen ska fästa","För att tyget ska krympa"],e:"Ångan får tråden att svälla och markeringen sitter kvar."},
+{k:"Markeringar",q:"Hur görs tråckelmarkering?",a:["I enkelt tyg med enkel tråd","I dubbelt tyg med dubbel tråd","Med sporre","Med krita enbart"],e:"Tråckelmarkering är permanent och görs i enkelt tyg med enkel tråd."},
+{k:"Markeringar",q:"På vilka tyger används ofta trådmarkering med sytråd?",a:["Tunna och ömtåliga tyger som siden och organza","Tjock ullkostym","Denim","Toiletyg"],e:"Trådmarkera: samma princip som tråckelmarkering men med sytråd, för tunnare tyger."},
+{k:"Markeringar",q:"Vad används trådnoppor till?",a:["Att markera punkter mitt i en mönsterdel, t.ex. slutet på en inprovning","Att markera sömsmånens kant","Att fästa foder","Att ersätta stämhack"],e:"Trådnoppan sticks genom mönstret och båda delarna, klipps isär och knyts på var sida."},
+{k:"Markeringar",q:"Vad är ett stämhack?",a:["Ett litet klipp tvärs över sömsmånen som visar var delar ska sitta ihop","En markering med krita mitt i delen","En tråcklad linje längs sylinjen","Ett hål för knappar"],e:"Stämhack är jätteviktigt oavsett vilken markeringsteknik du använder."},
+
+/* Stygn & sömmar */
+{k:"Stygn & sömmar",q:"Tunnare tyg eller större belastning på sömmen betyder att du ska sy...",a:["mindre stygn","större stygn","längre tråckelstygn","med dubbel tråd"],e:"Ju tunnare tyg eller ju större belastning, desto mindre stygn."},
+{k:"Stygn & sömmar",q:"När använder man stödtråckling?",a:["När materialen absolut inte får flytta sig, t.ex. vid dragkedjor","För att hålla fickor på plats efter att plagget är klart","Vid fållning av kjol","För att stoffera foder"],e:"Stödtråckling är en förstärkt tråckling."},
+{k:"Stygn & sömmar",q:"Vilken tråckling kan sitta kvar för att hålla fickor och sprund efter att plagget är klart?",a:["Snedtråckling","Stödtråckling","Vanlig tråckling","Märkstick"],e:"Snedtråckling används under sömnad och ibland kvar i det färdiga plagget."},
+{k:"Stygn & sömmar",q:"Vilket stygn används vanligtvis vid fållning av kjol och byxa?",a:["Trädningsstygn","Prickstygn","Stofferstygn","Krejstygn"],e:"Trädningsstygn är osynliga och ska inte synas från räta eller aviga."},
+{k:"Stygn & sömmar",q:"Vilket stygn blir som en handsydd stickning och ger ett lyxigt uttryck?",a:["Prickstygn","Trädningsstygn","Kaststygn","Tråckling"],e:"Prickstygn sitter t.ex. runt en dragkedja eller på krage och slag."},
+{k:"Stygn & sömmar",q:"Hur sys prickstygn?",a:["Nedstick bakom uppstick","Nedstick framför uppstick","Från vänster till höger i kors","Över kanten i små streck"],e:"Nedstick bakom uppstick ger den lilla prickan på rätsidan."},
+{k:"Stygn & sömmar",q:"Vad används stofferstygn till?",a:["Att stoffera fast foder","Att fålla byxor","Att tråckla blixtlås","Att markera ull"],e:"Stofferstygnen ska vara små korta streck precis över kanten."},
+{k:"Stygn & sömmar",q:"Åt vilket håll syr du krejstygn?",a:["Från vänster till höger","Från höger till vänster","Uppifrån och ned","Spelar ingen roll"],e:"Krejstygn: sy från vänster till höger, korsade stygn."},
+{k:"Stygn & sömmar",q:"Vilken söm är vanlig på skjortor och blusar i tunnare material?",a:["Vändsöm / fransk söm","Fällsöm","Kullpressad overlockad söm","Krejsöm"],e:"Vändsöm ger ett lyxigare uttryck än t.ex. overlock."},
+{k:"Stygn & sömmar",q:"Vilken söm är vanlig på jeans och ytterplagg?",a:["Fällsöm","Vändsöm","Fransk fåll","Trädningssöm"],e:"Fällsöm passar grövre material."},
+{k:"Stygn & sömmar",q:"Vad är en fransk fåll?",a:["En smal fåll på tunna material","En bred fåll på ull","En fåll med blindstygn på jeans","En fåll med overlock"],e:"Fransk fåll: smal fåll på tunna material."},
+{k:"Stygn & sömmar",q:"Varför används kaststygn i skrädderi?",a:["Det är skonsammare än overlock och minskar risken för genomslag","Det går snabbare än overlock","Det syns snyggare på rätsidan","Det förstärker sömmen mot slitage"],e:"Kaststygn hindrar sömsmånen från att remsa sig, skonsamt mot tyget."},
+{k:"Stygn & sömmar",q:"Hur börjar du en vändsöm?",a:["Aviga mot aviga, söm knappt halvvägs in på sömsmånen","Räta mot räta i sylinjen","Aviga mot aviga i sylinjen","Räta mot räta, söm knappt halvvägs in"],e:"Först aviga mot aviga, sedan vik om och sy räta mot räta i sylinjen. Inga trådar får titta fram."},
+{k:"Stygn & sömmar",q:"Vad skiljer kullpressad overlockad sömsmån från klyvpressad?",a:["Sömsmånerna pressas åt samma håll och overlockas ihop","Sömsmånerna pressas isär och overlockas var för sig","Sömsmånerna klipps bort","Sömmen sys två gånger"],e:"Klyvpressad: isär, overlocka var för sig. Kullpressad: åt samma håll, overlocka ihop."},
+
+/* Press */
+{k:"Press",q:"Vad är skillnaden mellan underpress och avpress?",a:["Underpress sker under arbetet, avpress när plagget är färdigt","Underpress sker från rätsidan, avpress från insidan","Underpress görs bara på ull","Det är samma sak"],e:"Underpress: under arbetets gång, från insidan. Avpress: slutpress för att släta ut och ta bort glans."},
+{k:"Press",q:"Varför pressar man lätt på tråcklade kanter först?",a:["Tråckelstygn kan ge fula märken som är svåra att pressa bort","För att tråden ska krympa","För att tråcklingen ska sitta bättre","För att spara tid"],e:"Pressa lätt, ta bort tråcklingarna och hårdpressa sedan."},
+{k:"Press",q:"Vad lägger du under sömsmånerna när du klyvpressar?",a:["Vattulin eller papper för att motverka genomslag","Mellanlägg","Presstrasa av siden","Ingenting"],e:"Vattulin eller papper hindrar sömsmånen från att synas på rätsidan."},
+{k:"Press",q:"Vad måste vara gjort innan avpress?",a:["Alla tråckeltrådar ska vara borttagna","Plagget ska vara tvättat","Fodret ska vara uttaget","Knapparna ska vara bortklippta"],e:"Vid avpress ska alla tråckeltrådar vara borttagna."},
+{k:"Press",q:"Vad ska du ALDRIG pressa rakt på?",a:["Brukten","Sömsmånen","Fållen","Insidan av plagget"],e:"Pressa krage/slag från framsidan och forma med handen, men aldrig rakt på brukten."},
+{k:"Press",q:"Vad gör du med plagget efter avpressen?",a:["Låter det hänga på docka tills det är helt kallt och torrt","Viker ihop det direkt","Lägger det i en påse","Hänger det i badrummet"],e:"Låt plagget hänga på docka och svalna helt."},
+{k:"Press",q:"Vad använder du vid pressning på rätsidan av tyget?",a:["Presstrasa eller teflonsula","Ingenting, direkt med järnet","Vattulin","Pressborste"],e:"På rätsidan används presstrasa eller teflonsula, ibland båda."},
+
+/* Ull */
+{k:"Ull",q:"Hur tvättar du ull enligt kompendiet?",a:["Ullprogram, 30 grader, mild centrifugering","60 grader med vanligt tvättmedel","Kallt med sköljmedel","40 grader med full centrifugering"],e:"Ullprogram, 30 grader och mild centrifugering."},
+{k:"Ull",q:"Vad får ull att filta ihop sig?",a:["Värme och mekanisk bearbetning","Kyla och torka","Ättika","Ånga utan rörelse"],e:"Värme + mekanisk bearbetning. Kan utnyttjas för att täta ett löst vävt tyg."},
+{k:"Ull",q:"Varför ska man inte tvätta ull med vanligt tvättmedel?",a:["Enzymerna är inte bra för fibern","Det blekar färgen","Det skummar för mycket","Det gör tyget styvt"],e:"Använd specialtvättmedel (t.ex. Y3) eller ett milt silikon- och SLS-fritt schampo."},
+{k:"Ull",q:"Vad kan du tvätta med om tyget har överskottsfärg eller torrfäller?",a:["Ca 1 dl ättika, utan tvättmedel","Sköljmedel","Klorin","Salt och varmvatten"],e:"Häll ca 1 dl ättika i facket för flytande tvättmedel och kör ullprogram."},
+{k:"Ull",q:"Varför ska man aldrig använda sköljmedel på ull?",a:["Det lägger en hinna som hindrar epidermisfjällen från att göra sitt jobb","Det får ullen att filta","Det blekar fibern","Det gör ullen brandfarlig"],e:"Hinnan förstör ullens egenskaper."},
+{k:"Ull",q:"Varför dampar man tyget?",a:["För att det ska avspänningskrympa efter spänningarna från vävning, färgning och rullning","För att ta bort färg","För att göra tyget glansigt","För att det ska filta"],e:"Tyget spänns i maskinerna och behöver fukt för att slappna av."},
+{k:"Ull",q:"Hur dampar du med ångstrykjärn?",a:["Håller järnet precis över tyget och sprutar ånga över hela ytan","Trycker järnet hårt mot vikt tyg","Pressar från rätsidan utan ånga","Stryker med torrt järn"],e:"Tyget ska inte ligga vikt. Gå över hela bredden och längden."},
+{k:"Ull",q:"Vad är kodordet när det gäller press av sömmar i ull?",a:["Låt svalna","Mer ånga","Pressa hårt","Vänta inte"],e:"Lägg en träbit över sömmen så att den svalnar under press."},
+{k:"Ull",q:"Vad händer om du bränner ett ömtåligt ulltyg?",a:["Fibern blir brun och uttorkad","Tyget krymper och filtar","Tyget blir glansigt","Ingenting, ull tål allt"],e:"Prova på en provbit och sänk värmen om du är osäker."},
+{k:"Ull",q:"Hur sköter du ett färdigt ullplagg bäst?",a:["Vädra, gärna i fuktig luft, och punkttvätta fläckar","Tvätta efter varje användning","Kemtvätta varje månad","Stryk det varje gång"],e:"Ull renar sig själv. Efter en natts vädring är plagget fräscht och pressen har inte släppt."},
+
+/* Mönsteruttag */
+{k:"Mönsteruttag",q:"Var ligger axelinprovningen i checklistans exempel?",a:["4 cm från inre axelspets","4 cm från yttre axelspets","Mitt på axeln","1 cm från halsen"],e:"Exempel: axelinprovning 4 cm från inre axelspets."},
+{k:"Mönsteruttag",q:"Vid vilken punkt ska framhals och bakhals harmoniera?",a:["Inre axelspets","Yttre axelspets","Mitt bak","Bystpunkt"],e:"Kontrollera att halslinjen löper jämnt över axelsömmen vid inre axelspets."},
+{k:"Mönsteruttag",q:"Vad ska kontrolleras vid yttre axelspets?",a:["Att axel fram och bak har rätt längd och är vinkelräta","Att knapphålen sitter jämnt","Att trådraken är utmärkt","Att halsdjupet stämmer"],e:"Axel fram och bak: rätt längd och vinkelräta i yttre axelspets."},
+{k:"Mönsteruttag",q:"Vad står MF och MB för?",a:["Mitt fram och mitt bak","Mönster fram och mönster bak","Mellanlägg fram och mellanlägg bak","Midja fram och midja bak"],e:"MF = mitt fram, MB = mitt bak."},
+{k:"Mönsteruttag",q:"Vad ska du göra med inprovningarna innan du klipper sömsmånen?",a:["Vika dem åt rätt håll","Klippa upp dem","Tråckla dem","Ta bort dem från mönstret"],e:"Inprovningarna ska vara vikta åt rätt håll innan sömsmånen klipps, annars blir kanten fel."},
+{k:"Mönsteruttag",q:"Vilken text är exempel på nödvändig text på mönstret?",a:["Hållning x cm, vikning, Mf, Mb, rynkas","Tygfärg och pris","Datum och ditt namn","Tvättråd"],e:"Hållning, vikning, Mf, Mb och rynkas ska stå utskrivet."},
+
+/* Termer */
+{k:"Termer",q:"Hur löper varpen i ett vävt tyg?",a:["Längs med tyget, parallellt med stadkanten","Tvärs över tyget","Diagonalt i 45 grader","I cirklar"],e:"Varp: längs. Väft: tvärs. Trådraken följer normalt varpen."},
+{k:"Termer",q:"Vad betyder skrådd?",a:["Diagonalt, ca 45 grader mot trådraken","Längs varpen","Längs väften","Längs stadkanten"],e:"Skrådd tyg är töjbart och används t.ex. till snedslåar."},
+{k:"Termer",q:"Vad betyder att klyvpressa?",a:["Pressa isär sömsmånerna","Pressa sömsmånerna åt samma håll","Pressa från rätsidan","Pressa med träbit"],e:"Klyvpressa = isär. Kullpressa = åt ena hållet."},
+{k:"Termer",q:"Vad betyder att trappklippa?",a:["Klippa sömsmånerna i olika bredd för att minska tjockleken","Klippa små hack i sömsmånen","Klippa ut tyget i trappsteg","Klippa bort hela sömsmånen"],e:"Används t.ex. runt krage och fickpåse så att kanten blir platt."},
+{k:"Termer",q:"Vad är en infodring?",a:["En tygdel som täcker och avslutar en kant på insidan, t.ex. halsringning","Ett lös foder","Ett mellanlägg","En sorts söm"],e:"Infodringen ger en ren kant på insidan."},
+{k:"Termer",q:"Vad är rörelsevidd?",a:["Extra vidd utöver kroppsmåtten så att man kan röra sig","Måttet runt höften","Hur mycket tyget töjer sig","Vidden på en kjolfåll"],e:"Rörelsevidd läggs till kroppsmåtten vid konstruktion."},
+{k:"Termer",q:"Vad är en inprovning?",a:["Ett insytt veck som formar plagget efter kroppen","En provning med kund","En söm i fodret","Ett stämhack"],e:"Inprovningar finns t.ex. vid byst, midja och axel."},
+{k:"Termer",q:"Vad är mellanlägg?",a:["Ett stabiliserande material som pressas eller sys på tyget","Tyget mellan två sömmar","Fodertyg","Ett pappersmönster"],e:"Mellanlägg ger stadga, t.ex. på krage, framkant och ficköppning."},
+
+{k:"Termer",q:"Vad står MVK för på ett mönster?",a:["Mot vikt kant","Mitt vid kanten","Mellanlägg vid kant","Markera vid klippning"],e:"MVK = mot vikt kant. Delen läggs mot tygvikningen och blir hel när den vecklas ut."},
+{k:"Termer",q:"En mönsterdel är märkt MVK. Hur lägger du den vid utlägget?",a:["Mot tygvikningen, och den läggs ut bland de första","Mot stadkanten","Diagonalt mot trådraken","Var som helst där tyget räcker"],e:"Börja med delarna som ska ligga mot vikt kant, sedan resten."},
+{k:"Termer",q:"Vad är en besparing?",a:["Ett avskilt tygstycke över axlarna och en bit ner på ryggen, även kallat ok","Tyg som klipps bort för att spara material","En sparsam stygnlängd","Ett sätt att lägga ut mönsterdelar tätt"],e:"Besparing = ok, på engelska yoke. Sitter över axlarna, t.ex. på en skjorta, och kan också finnas i midjan."},
+{k:"Termer",q:"Varför är besparingen ofta dubblerad på en skjorta?",a:["För att förstärka axelpartiet där plagget slits och rör sig mest","För att dölja axelsömmen","För att skjortan ska bli varmare","För att spara tyg"],e:"Axlarna utsätts för mest slitage och rörelse, så en dubbel besparing ökar slitstyrkan."},
+{k:"Termer",q:"Hur kan en besparing förbättra passformen?",a:["Den formar tyget över skulderbladen och gör det möjligt att lägga in extra vidd eller rynkning","Den gör plagget töjbart","Den ersätter rörelsevidden","Den gör att axelsömmen inte behövs"],e:"Besparingen formar över skulderbladen så att vidd eller rynkning kan läggas in utan att axelsömmen hamnar fel."},
+{k:"Termer",q:"Vad gör en besparing i ländryggen på t.ex. jeans eller kjol?",a:["Formar plagget över stussen utan traditionella inprovningar","Förstärker gylfen","Gör linningen bredare","Ersätter fickpåsen"],e:"Besparingen bak på jeans tar hand om formen över stussen i stället för inprovningar."},
+{k:"Termer",q:"Vilket ord betyder samma sak som besparing?",a:["Ok","Infodring","Sprund","Våd"],e:"Besparing och ok är samma sak, på engelska yoke."},
+{k:"Termer",q:"Vad är spegelsömmen?",a:["Sömmen som förenar kavajens krage med kavajslaget","Mitt bak-sömmen på en kavaj","Sömmen som fäster fodret i fållen","Axelsömmen på en kavaj"],e:"Spegelsömmen sitter där krage och slag möts på kavajen."},
+{k:"Krage och slag",q:"Vad kallas sömmen där kavajens krage och slag möts?",a:["Spegelsöm","Vändsöm","Fällsöm","Brukt"],e:"Spegelsömmen förenar krage och slag. Brukten är vikkanten där slaget viks."},
+
+/* Blixtlås */
+{k:"Blixtlås",q:"Hur långt från MB maskinsyr du fast blixtlåset?",a:["Ca 0,5 cm","Ca 2 cm","1 mm","Ca 1,5 cm"],e:"Maskinsy blixtlåset ca 0,5 cm från MB."},
+{k:"Blixtlås",q:"Var ligger blixtlåsets tandrad i förhållande till kanten?",a:["1 mm innanför kanten","5 mm utanför kanten","Exakt på kanten","1 cm innanför kanten"],e:"Tandraden ligger 1 mm innanför kanten."},
+{k:"Blixtlås",q:"Hur syr du MB-sömmen där blixtlåset ska sitta?",a:["Med långa stygn som sprättas upp senare","Med kort stygnlängd","Med sicksack","Den sys inte alls"],e:"Långa stygn för blixtlåset, vanlig söm nedanför."},
+
+/* Passpoalficka */
+{k:"Passpoalficka",q:"Hur lång är ficköppningen i passpoalfickan?",a:["Ca 13 cm","Ca 8 cm","Ca 20 cm","Ca 5 cm"],e:"Steg 1: markera ficköppningen, ca 13 cm."},
+{k:"Passpoalficka",q:"Hur långt från markeringen för ficköppningen tråcklar du passpoalerna?",a:["Ca 3 mm","Ca 1 cm","Ca 0,5 cm","Ca 2 cm"],e:"Tråckla räta mot räta ca 3 mm från markeringen."},
+{k:"Passpoalficka",q:"Hur långt från ficköppningen maskinsyr du passpoalerna?",a:["0,5 cm","3 mm","1 cm","1,5 cm"],e:"Maskinsy 0,5 cm från ficköppningen och fäst exakt vid tvärmarkeringarna."},
+{k:"Passpoalficka",q:"Hur klipper du upp ficköppningen?",a:["Till 1 cm före tvärmarkeringen, sedan snett till mitten av sista stygnet","Rakt ända fram till tvärmarkeringen","Bara i mitten, 5 cm","Genom både plaggdel och passpoal"],e:"Klipp endast genom plaggdelen, inte i passpoalen."},
+{k:"Passpoalficka",q:"Varför rundar du hörnen på fickpåsen?",a:["För att förhindra dammsamling","För att det ska gå snabbare","För att spara tyg","För att den ska synas mindre"],e:"Sy runt fickpåsen två gånger, runda hörnen och förstärk över flikarna."},
+{k:"Passpoalficka",q:"Vad gör du med flikarna på passpoalernas kortsidor?",a:["Fäster dem med en maskinsöm precis vid kanten och drar lätt i passpoalerna","Klipper bort dem","Viker in dem och handsyr","Låter dem vara lösa"],e:"Dra lätt i passpoalerna så att de spänns (skiss C)."},
+
+/* Krage och slag */
+{k:"Krage och slag",q:"Hur pressar du axelsömmarna i arbetsgången för krage och slag?",a:["Klyvpressar, overlockar inte","Kullpressar och overlockar","Overlockar ihop","Pressar inte alls"],e:"Steg 3: klyvpressa, overlocka ej!"},
+{k:"Krage och slag",q:"Mellan vilka punkter syr du fast underkragen i halsringningen?",a:["Från slaghack till slaghack, inte ut i sömsmånen","Från MF till MF","Hela vägen ut i sömsmånen","Från axelsöm till axelsöm"],e:"Stanna och fäst exakt vid slaghack."},
+{k:"Krage och slag",q:"Hur mycket renklipper du sömsmånerna runt kragen?",a:["Till ca 0,5 cm","Till ca 1,5 cm","Till 1 mm","Inte alls"],e:"Ta bort tråcklingar, renklipp till ca 0,5 cm och klyvpressa."},
+{k:"Krage och slag",q:"Hur markerar du hörnen på framstycke och underkrage?",a:["Med trådnoppor","Med sporrpapper","Med märkstick","Med tusch"],e:"Brukten markeras med trådmarkering, alla hörn med trådnoppor."},
+{k:"Krage och slag",q:"Var pressar du på mellanlägg i början av arbetsgången?",a:["På framstycke och underkrage","På överkrage och ärmar","På bakstycket","Endast på slaget"],e:"Steg 1: mellanlägg på framstycke och underkrage. Observera trådraken!"}
+];
+
+const $ = id => document.getElementById(id);
+const cats = [...new Set(Q.map(x => x.k))];
+const counts = [10, 20, 40, "Alla"];
+let deck = [], i = 0, right = 0, missed = [], answered = false;
+
+function shuffle(a){ a = a.slice(); for(let n=a.length-1;n>0;n--){const j=Math.floor(Math.random()*(n+1));[a[n],a[j]]=[a[j],a[n]];} return a; }
+
+// Bygg startvalen
+$("cats").innerHTML = cats.map(c => `<label class="chip"><input type="checkbox" value="${c}" checked><span>${c}</span></label>`).join("");
+$("counts").innerHTML = counts.map((c,n) => `<label class="chip"><input type="radio" name="count" value="${c}" ${n===1?"checked":""}><span>${c}${typeof c==="number"?" frågor":""}</span></label>`).join("");
+function selected(){ return [...document.querySelectorAll("#cats input:checked")].map(x => x.value); }
+function updateAvail(){
+  const n = Q.filter(x => selected().includes(x.k)).length;
+  $("avail").textContent = `${n} frågor i valda områden`;
+  $("startBtn").disabled = n === 0;
+}
+$("cats").addEventListener("change", updateAvail);
+updateAvail();
+
+function show(view){ ["startView","quizView","resultView"].forEach(v => $(v).classList.toggle("hidden", v !== view)); }
+
+function setTape(){
+  const pct = deck.length ? (i + (answered?1:0)) / deck.length * 100 : 0;
+  $("tapeFill").style.width = pct + "%";
+  $("tapeLeft").textContent = deck.length ? `${i + (answered?1:0)} av ${deck.length} besvarade` : "0 besvarade";
+  $("tapeRight").textContent = deck.length ? `${right} rätt` : "";
+}
+
+function start(list){
+  deck = list; i = 0; right = 0; missed = [];
+  show("quizView"); render();
+}
+
+$("startBtn").onclick = () => {
+  const pool = shuffle(Q.filter(x => selected().includes(x.k)));
+  const c = document.querySelector('input[name="count"]:checked').value;
+  start(c === "Alla" ? pool : pool.slice(0, Number(c)));
+};
+
+function render(){
+  answered = false;
+  const item = deck[i];
+  const opts = shuffle(item.a.map((t, n) => ({t, ok: n === 0})));
+  $("qCat").textContent = `Fråga ${i+1} av ${deck.length}, ${item.k}`;
+  $("qText").textContent = item.q;
+  $("opts").innerHTML = "";
+  opts.forEach((o, n) => {
+    const b = document.createElement("button");
+    b.className = "opt";
+    b.innerHTML = `<span class="key">${n+1}</span><span></span>`;
+    b.lastChild.textContent = o.t;
+    b.dataset.ok = o.ok ? "1" : "";
+    b.onclick = () => choose(b);
+    $("opts").appendChild(b);
+  });
+  $("explain").innerHTML = "";
+  $("nextBtn").classList.add("hidden");
+  setTape();
+  $("opts").firstChild.focus({preventScroll:true});
+}
+
+function choose(btn){
+  if(answered) return;
+  answered = true;
+  const item = deck[i];
+  const ok = btn.dataset.ok === "1";
+  document.querySelectorAll(".opt").forEach(b => {
+    b.disabled = true;
+    if(b.dataset.ok) b.classList.add("right");
+  });
+  if(ok){ right++; } else { btn.classList.add("wrong"); missed.push(item); }
+  const ex = document.createElement("div");
+  ex.className = "explain" + (ok ? " ok" : "");
+  ex.innerHTML = `<strong></strong><span></span>`;
+  ex.firstChild.textContent = ok ? "Rätt!" : `Fel. Rätt svar: ${item.a[0]}`;
+  ex.lastChild.textContent = item.e;
+  $("explain").appendChild(ex);
+  const nb = $("nextBtn");
+  nb.textContent = i === deck.length - 1 ? "Visa resultat" : "Nästa fråga";
+  nb.classList.remove("hidden");
+  nb.focus({preventScroll:true});
+  setTape();
+}
+
+$("nextBtn").onclick = () => { if(i < deck.length - 1){ i++; render(); } else finish(); };
+$("quitBtn").onclick = () => { deck.length = answered ? i+1 : i; deck.length ? finish() : reset(); };
+
+function finish(){
+  show("resultView");
+  i = deck.length - 1; answered = true; setTape();
+  const pct = Math.round(right / deck.length * 100);
+  $("score").textContent = `${right} / ${deck.length}`;
+  $("verdict").textContent =
+    pct === 100 ? "Fullt pott. Du är redo för provet." :
+    pct >= 80 ? `${pct} procent rätt. Repetera de missade frågorna nedan.` :
+    pct >= 50 ? `${pct} procent rätt. Läs igenom kompendiet för de områden du missade och öva igen.` :
+    `${pct} procent rätt. Ta ett område i taget och kör det tills det sitter.`;
+  $("retryMissed").classList.toggle("hidden", missed.length === 0);
+  $("missed").innerHTML = "";
+  missed.forEach(m => {
+    const li = document.createElement("li");
+    li.innerHTML = `<div class="q"></div><div class="a"></div><div class="small"></div>`;
+    li.children[0].textContent = m.q;
+    li.children[1].textContent = m.a[0];
+    li.children[2].textContent = m.e;
+    $("missed").appendChild(li);
+  });
+}
+
+function reset(){ deck = []; i = 0; right = 0; answered = false; setTape(); show("startView"); }
+$("retryMissed").onclick = () => start(shuffle(missed));
+$("restart").onclick = reset;
+
+document.addEventListener("keydown", e => {
+  if($("quizView").classList.contains("hidden")) return;
+  const n = parseInt(e.key, 10);
+  if(n >= 1 && n <= 4 && !answered){ const b = document.querySelectorAll(".opt")[n-1]; if(b) choose(b); }
+  else if(e.key === "Enter" && answered && document.activeElement !== $("nextBtn")){ $("nextBtn").click(); }
+});
+</script>
+</body>
+</html>
